@@ -1,0 +1,57 @@
+# namespace-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: basic-reader
+  namespace: dev
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch"]
+---
+# namespace-role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: eks-user-reader
+  namespace: dev
+subjects:
+  - kind: User
+    name: eks-user
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: basic-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# namespace-role.yaml (second role for eks-admin-role)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: basic-reader
+  namespace: dev
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "services"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch"]
+---
+# namespace-role-binding.yaml (second binding for eks-admin-role)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: eks-admin-reader
+  namespace: dev
+subjects:
+  - kind: User
+    name: eks-admin-role
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: basic-reader
+  apiGroup: rbac.authorization.k8s.io
