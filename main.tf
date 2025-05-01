@@ -28,6 +28,32 @@ module "vpc" {
   }
 }
 
+module "https-sg" {
+  source = "./sg-module"
+  sg_name = "additonal-sg"
+  vpc_id = module.vpc.vpc_id
+  sg_description = "SSH Security Group"
+  ingress = [
+    {
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+      description = "https access"
+    }
+  ]
+  egress = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+      description = "Allow all outbound traffic"
+    }
+  ]
+}
+
+
 
 
 module "eks" {
@@ -98,31 +124,6 @@ module "ssh-sg" {
       protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
       description = "SSH access"
-    }
-  ]
-  egress = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-      description = "Allow all outbound traffic"
-    }
-  ]
-}
-
-module "https-sg" {
-  source = "./sg-module"
-  sg_name = "additonal-sg"
-  vpc_id = module.vpc.vpc_id
-  sg_description = "SSH Security Group"
-  ingress = [
-    {
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-      description = "https access"
     }
   ]
   egress = [
